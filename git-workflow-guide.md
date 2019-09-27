@@ -29,7 +29,7 @@ While we're on the topic of the master branch: The _master_ branch in this artic
 
 ## Feature / topic branches
 
-> Problem: Team members are working on several unrelated tasks. Master-only development leads to a loss of oversight. Everyone is stepping on each other's feet. `master` contains unfinished work.
+> Problem: Team members are working on several unrelated tasks. Master-only development leads to a loss of oversight. Everyone is stepping on each other's feet. `master` starts to contain unfinished work.
 
 Teams of >1 developers benefit from using git in more sophisticated ways. Whenever you start working on some changes (be it a new feature or a fix) you should create a new branch based on the current version of master. After finishing work on such a branch it is merged back into master and deleted. This is so common, I think every team is doing this.
 
@@ -37,12 +37,15 @@ Teams of >1 developers benefit from using git in more sophisticated ways. Whenev
 
 The reason for working on separate branches is, first of all, to cleanly separate simultaneous changes, and secondly, to separate unfinished work from the stable master branch. The most popular name for these branches is __feature branch__, although the term __topic branch__ is actually more accurate since not only new features should be coded in separate branches.
 
-TODO
-[](https://www.atlassian.com/blog/git/git-team-workflows-merge-or-rebase)
+With feature branches comes another topic of discussion for teams and that is the one of merging vs rebasing branches with one another. One is the discussion of how to pull updates of the branches you're working on [[1]](https://stackoverflow.com/questions/15316601/in-what-cases-could-git-pull-be-harmful) [[2]](https://stackoverflow.com/questions/2472254/when-should-i-use-git-pull-rebase) [[3]](https://adamcod.es/2014/12/10/git-pull-correct-workflow.html) - the other is the question of how to get your changes back into master [[4]](https://www.atlassian.com/blog/git/git-team-workflows-merge-or-rebase). These topics are certainly worth looking into.
 
 ## Tier 2: Pull Requests and code reviews
 
-Pull Requests is the big innovation that GitHub brought to the git table. They are like a forum thread in which code changes are discussed. PRs are created when a branch is ready to be merged into `master` or when you push some code that you want to merge later but already want feedback on. It displays the changes between the to-be-merged branch and the target branch you choose (`master` most of the time). It is possible for team members to discuss and evaluate the new code. Reviewers can request changes. It is even possible to make a comment on a particular  code line in the web UI directly.
+TODO: Think about splitting this up.
+
+> 
+
+Pull Requests are like a forum thread in which code changes are discussed. PRs are created when a branch is ready to be merged into `master` or when you push some code that you want to merge later but already want feedback on. It displays the changes between the to-be-merged branch and the target branch you choose (`master` most of the time). It is possible for team members to discuss and evaluate the new code. Reviewers can request changes. It is even possible to make a comment on a particular  code line in the web UI directly.
 
 There are two general ways of working with PRs:
 
@@ -72,7 +75,7 @@ See also: [Anatomy of a perfect Pull Request](https://opensource.com/article/18/
 
 Sometimes there are merge conflicts and thus your PR can't be accepted. This happens when the master branch advanced in the meantime while you were working on your topic branch and both branches changed overlapping lines of code. The PR web interface will tell you that there are conflicts and that the branch can't be merged.
 
-There are two ways to  
+There are two ways to ... TODO pull vs pull --rebase
 
 #### Allow / prohibit ff
 
