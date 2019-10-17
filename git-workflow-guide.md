@@ -95,6 +95,10 @@ Personally I'm not a fan of this. I see the argument that a topic branch should 
 DOING: rebase before PR vs pull before PR 
 
 A much discussed issue in the Git community is how to deal with merging branches that have untrivial conflicts with merge target branch.
+So when you are in the situation that you have done work on a branch that introduces many changes or in a situation where you know that the master branch has received many changes while you were working - anyway, you're in a situation where you have to synchronize your branch with the master branch.
+You want to perform that synchronization because you know your code and whoever is going to do the code review might overlook something and make mistakes. 
+There are two approaches to do that synchronization. Either you `pull` the `origin/master` branch into your topic branch or you `rebase` the topic branch onto the current `origin/master`. 
+
 
 
 TODO: 
