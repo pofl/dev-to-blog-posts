@@ -9,7 +9,7 @@ tags: git
 
 Git workflows differ from dev team to dev team and from git server to git server (Github, Gitlab, etc.). Git as a technology is so solid and flexible that people have found multiple viable workflows. Here is an extensive overview. It is assumed that you know git.
 
-> I plan on updating this post based on your feedback. So please, if you think something's wrong or missing, leave a comment or contact me!
+> I plan on updating this post based on your feedback. So please, if you think something's wrong or missing, or if a link becomes out-dated leave a comment or contact me!
 
 Another guide about the same topic: <https://www.codingblocks.net/podcast/comparing-git-workflows/>
 
@@ -37,38 +37,40 @@ Another guide about the same topic: <https://www.codingblocks.net/podcast/compar
 
 [GitHub's guide on forking](https://guides.github.com/activities/forking/)
 
-## [-] PR preparation policies
+## [-] Hygiene considerations for the Git history
 
-#### [ ] Permissions
+TODO: Here intro: 
+Some teams dictate code style, clean history and code reviews.
+Clean Git history actually means clean master history.
 
-- For this setup it is common to have some restrictions set up for some branches. Example 1: `master` is write-protected so that only senior devs can push to it. Example 2: `master` can only be updated by accepting PRs where accepting PRs is only allowed for seniors.
-- Sometimes there are branches for which the code gets automatically deployed. This is known as continuous integration or continuous deployment and is a huge topic. Deployment can be to the production environment directly or to a testing or 'staging' environment where the code is tested for regressions first.
+#### [X] Permissions
 
-It is very common to configure the git server in such a way that release branches and `master` are protected. I.e. only specific persons can alter it, for example, or these branches can only be modified through accepted PRs and who can accept PRs.
+Many Git servers allow restricting permissions to some extent. Here are a few use cases:
 
-When PRs are the preferred way to drive development, the question arises who is responsible for merging changes. There are two options:
+- Suppose you have a branch called `live` or `prod` which, on every new commit on it, get automatically deployed into the live production environment that is used by your users. You probably don't want everyone to be able to make changes on these branches.
+- Let's say you want to maintain a very high code quality in master, it should not be possible for people to bypass the code quality assurance measurements.
 
-1. It's either the seniors of the project. They merge the change manually making sure and taking responsibility that the code is integrated without breakage. For that they either resolve conflicts locally on their machine and push the result or they use the web interface for merging if the git server provides one.
+So in both examples what you want to achieve is, basically, to restrict write permissions on certain branches. Here are a few ways some Git hosting solutions allow you to do this:
 
-2. It's the person who submits the PR.
+- Pretty much every one of them allows you to protect branches against changes like pushing or merging. You are able to grant this permission to a select set of users.
+- Pretty much every one of them allows you to make it a requirement that some CI/CD pipeline succeeds before PRs can be acctepted.
+- Some of them enable you to make it so that some branches can only be modified by accepted PRs. This effectively makes code review mandatory and is therefore very cool. It is also sometimes possible to require the approval of PRs by specific persons.
 
-The rest of this section goes into detail about option 2.
+Here are some links that go into more detail: [GitLab on the benefits of branch protection](https://about.gitlab.com/blog/2014/11/26/keeping-your-code-protected/), [GitLab documentation of allowing branches to be modified only through PRs](https://docs.gitlab.com/12.3/ee/user/project/protected_branches.html#using-the-allowed-to-merge-and-allowed-to-push-settings) (Merge Requests in the GitLab language) and [GitHub on their branch protection features](https://help.github.com/en/enterprise/2.18/user/articles/about-protected-branches)
 
-For merge policies or PR-acceptance-criteria there are again so many variations.
-
-#### [X] Clean history
+#### [X] Clean commits
 
 First, a link: [Anatomy of a perfect Pull Request](https://opensource.com/article/18/6/anatomy-perfect-pull-request)
 
 Many teams have rules that determine under which conditions the commit history is 'clean'. Firstly many teams have rules what the commit message should look like. One very popular set of rules is this (read the [source](https://chris.beams.io/posts/git-commit/) to understand the reasoning behind these rules):
 
 1. Separate subject from body with a blank line
-2. Limit the subject line to 50 characters
-3. Capitalize the subject line
 4. Do not end the subject line with a period
 5. Use the imperative mood in the subject line
-6. Wrap the body at 72 characters
 7. Use the body to explain what and why vs. how
+3. Capitalize the subject line
+2. Limit the subject line to 50 characters
+6. Wrap the body at 72 characters
 
 But there are other styles. I've heard of projects which mandate that the commit title starts with the name of the module or the file in which the changes were made or the name of the module that is affected (in such a case there is usually a not so restrictive rule on title length). Some teams also mandate that there must always be a body.
 
@@ -80,19 +82,37 @@ We all do however make that "WIP" commit from time to time. We do commits that d
 
 PS: [Linus Torvalds on _clean history_](https://lwn.net/Articles/328438/)
 
-###### [X] Squash merge
+#### [X] Squash merge
 
 [This article](https://docs.microsoft.com/en-us/azure/devops/repos/git/merging-with-squash) explains everything.
 
-TL;DR a squash merge is a merge where the entire merged branch is condensed to a single commit which is created on top of the merged-to branch without creating a merge commit. Some teams like to do this.
+TL;DR a squash merge is a merge where the entire merge source branch is condensed to a single commit which is created on top of the merge target branch without creating a merge commit. Some teams like to do this because it keeps the Git history slim.
 
-#### [ ] Avoiding merge conflicts
+Personally I'm not a fan of this. I see the argument that a topic branch should contain only one cohesive change so squash-merging should be okay in theory. However, I disagree with this because in practice fixing an issue or making a change often entails multiple logical single changes which should be in separate commits IMO.
+
+#### [ ] Practices concerning the submittal of changes
+
+DOING: rebase before PR vs pull before PR 
+
+A much discussed issue in the Git community is how to deal with merging branches that have untrivial conflicts with merge target branch.
+
+
+TODO: 
+- [merge] ff = false # forbid fast-forward merges, because merge commits is historic information that doesn't hurt you and might be useful to somebody
+
+
 
 Sometimes there are merge conflicts and thus your PR can't be accepted. This happens when the master branch advanced in the meantime while you were working on your topic branch and both branches changed overlapping lines of code. The PR web interface will tell you that there are conflicts and that the branch can't be merged.
 
-There are two ways to ... TODO pull vs pull --rebase
-
 Some teams prefer to have a linear history, where there are no branches and merges visible. 
+
+When PRs are the preferred way to drive development, the question arises who is responsible for merging changes. There are two options:
+
+1. It's either the seniors of the project. They merge the change manually making sure and taking responsibility that the code is integrated without breakage. For that they either resolve conflicts locally on their machine and push the result or they use the web interface for merging if the git server provides one.
+
+2. It's the person who submits the PR.
+
+The rest of this section goes into detail about option 2.
 
 ## [X] Branching strategies
 
