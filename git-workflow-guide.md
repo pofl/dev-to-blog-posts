@@ -65,12 +65,12 @@ First, a link: [Anatomy of a perfect Pull Request](https://opensource.com/articl
 Many teams have rules that determine under which conditions the commit history is 'clean'. Firstly many teams have rules what the commit message should look like. One very popular set of rules is this (read the [source](https://chris.beams.io/posts/git-commit/) to understand the reasoning behind these rules):
 
 1. Separate subject from body with a blank line
-4. Do not end the subject line with a period
-5. Use the imperative mood in the subject line
-7. Use the body to explain what and why vs. how
-3. Capitalize the subject line
-2. Limit the subject line to 50 characters
-6. Wrap the body at 72 characters
+2. Do not end the subject line with a period
+3. Use the imperative mood in the subject line
+4. Use the body to explain what and why vs. how
+5. Capitalize the subject line
+6. Limit the subject line to 50 characters
+7. Wrap the body at 72 characters
 
 But there are other styles. I've heard of projects which mandate that the commit title starts with the name of the module or the file in which the changes were made or the name of the module that is affected (in such a case there is usually a not so restrictive rule on title length). Some teams also mandate that there must always be a body.
 
@@ -94,10 +94,7 @@ Personally I'm not a fan of this. I see the argument that a topic branch should 
 
 DOING: rebase before PR vs pull before PR 
 
-A much discussed issue in the Git community is how to deal with merging branches that have untrivial conflicts with merge target branch.
-So when you are in the situation that you have done work on a branch that introduces many changes or in a situation where you know that the master branch has received many changes while you were working - anyway, you're in a situation where you have to synchronize your branch with the master branch.
-You want to perform that synchronization because you know your code and whoever is going to do the code review might overlook something and make mistakes. 
-There are two approaches to do that synchronization. Either you `pull` the `origin/master` branch into your topic branch or you `rebase` the topic branch onto the current `origin/master`. 
+A much discussed issue in the Git community is how to deal with merging branches that have untrivial conflicts with merge target branch. So when you are in the situation that you have done work on a branch that introduces many changes or in a situation where you know that the master branch has received many changes while you were working - anyway, you're in a situation where you have to synchronize your branch with the master branch. You want to perform that synchronization because you know your code and whoever is going to do the code review might overlook something and make mistakes. There are two approaches to do that synchronization. Either you `pull` the `origin/master` branch into your topic branch or you `rebase` the topic branch onto the current `origin/master`. 
 
 
 
