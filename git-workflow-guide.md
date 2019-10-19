@@ -13,7 +13,7 @@ Git workflows differ from dev team to dev team and from git server to git server
 
 Another guide about the same topic: <https://www.codingblocks.net/podcast/comparing-git-workflows/>
 
-## [X] Forking vs Centralized Workflow
+## Forking vs Centralized Workflow
 
 1. The centralized workflow - i.e. all developers on a team have read and write access to a shared repo.
     - This is especially common for professional teams.
@@ -37,17 +37,22 @@ Another guide about the same topic: <https://www.codingblocks.net/podcast/compar
 
 [GitHub's guide on forking](https://guides.github.com/activities/forking/)
 
-## [-] Hygiene considerations for the Git history
+## Hygiene considerations for the Git history
 
+<!--
 TODO: Here intro: 
 Some teams dictate code style, clean history and code reviews.
 Clean Git history actually means clean master history.
+-->
+Clean and consistent code is easier to work with. To accomplish that teams author a code style guide and enforce it. The addition of Git as a tool for development brings with it a whole new dimension of things that need to be kept clean. This section explains these things.
 
-#### [X] Permissions
+The goal is to have a clean Git history... it's called Git history although what people actually mean is the history of `master` (and other permanent branches).
+
+#### Permissions
 
 Many Git servers allow restricting permissions to some extent. Here are a few use cases:
 
-- Suppose you have a branch called `live` or `prod` which, on every new commit on it, get automatically deployed into the live production environment that is used by your users. You probably don't want everyone to be able to make changes on these branches.
+- Suppose you have a branch called `live` or `prod` which, on every new commit, gets automatically deployed into the live production environment that is used by your users. You probably don't want everyone to be able to make changes on these branches.
 - Let's say you want to maintain a very high code quality in master, it should not be possible for people to bypass the code quality assurance measurements.
 
 So in both examples what you want to achieve is, basically, to restrict write permissions on certain branches. Here are a few ways some Git hosting solutions allow you to do this:
@@ -58,7 +63,7 @@ So in both examples what you want to achieve is, basically, to restrict write pe
 
 Here are some links that go into more detail: [GitLab on the benefits of branch protection](https://about.gitlab.com/blog/2014/11/26/keeping-your-code-protected/), [GitLab documentation of allowing branches to be modified only through PRs](https://docs.gitlab.com/12.3/ee/user/project/protected_branches.html#using-the-allowed-to-merge-and-allowed-to-push-settings) (Merge Requests in the GitLab language) and [GitHub on their branch protection features](https://help.github.com/en/enterprise/2.18/user/articles/about-protected-branches)
 
-#### [X] Clean commits
+#### Clean commits
 
 First, a link: [Anatomy of a perfect Pull Request](https://opensource.com/article/18/6/anatomy-perfect-pull-request)
 
@@ -82,7 +87,7 @@ We all do however make that "WIP" commit from time to time. We do commits that d
 
 PS: [Linus Torvalds on _clean history_](https://lwn.net/Articles/328438/)
 
-#### [X] Squash merge
+#### Squash merge
 
 [This article](https://docs.microsoft.com/en-us/azure/devops/repos/git/merging-with-squash) explains everything.
 
@@ -90,34 +95,21 @@ TL;DR a squash merge is a merge where the entire merge source branch is condense
 
 Personally I'm not a fan of this. I see the argument that a topic branch should contain only one cohesive change so squash-merging should be okay in theory. However, I disagree with this because in practice fixing an issue or making a change often entails multiple logical single changes which should be in separate commits IMO.
 
-#### [ ] Practices concerning the submittal of changes
+#### Linearity of Git history
 
-DOING: rebase before PR vs pull before PR 
+One issue -- that is kind of controversial in the Git community -- is how to deal with merging branches that have untrivial conflicts with merge target branch. You get in such a situation easily when you have done a lot of changes on a branch or when the master branch has received many changes while you were working on your task. At this point you might feel like you better synchronize your branch with master, because for one you don't want to bother the reviewer with merging and secondly you probably know your code better anyway and can avoid mistakes better.
 
-A much discussed issue in the Git community is how to deal with merging branches that have untrivial conflicts with merge target branch. So when you are in the situation that you have done work on a branch that introduces many changes or in a situation where you know that the master branch has received many changes while you were working - anyway, you're in a situation where you have to synchronize your branch with the master branch. You want to perform that synchronization because you know your code and whoever is going to do the code review might overlook something and make mistakes. There are two approaches to do that synchronization. Either you `pull` the `origin/master` branch into your topic branch or you `rebase` the topic branch onto the current `origin/master`. 
+There are two approaches to do that synchronization. Either you `pull` the `origin/master` branch into your topic branch or you `rebase` the topic branch onto the current `origin/master`. This is discussed in length [here](https://www.atlassian.com/blog/git/git-team-workflows-merge-or-rebase), [here](https://stackoverflow.com/questions/2472254/when-should-i-use-git-pull-rebase), [here](https://stackoverflow.com/questions/15316601/in-what-cases-could-git-pull-be-harmful), and [here](https://adamcod.es/2014/12/10/git-pull-correct-workflow.html).
 
+There are two extremes in philosophy regarding Git history:
+1. Those who want a perfectly linear history for master without any merge commits.
+2. Those who try to never rewrite history. They avoid rebasing and only allow  `rebase -i` to clean up the commits in their topic branch. Sometimes they forbid fast-forward merges ([explanation of fast-forward merges](http://marklodato.github.io/visual-git-guide/index-en.html#merge)).
 
+The argument of the first is that neat history is easier to understand. The argument of the latter is that changing history is like lying and that the benefit is questionable. [Here](https://gitlab.gnome.org/GNOME/mutter/-/network/master) you can see the Git history of a project following the first philosophy and [here](https://gitlab.com/gitlab-com/www-gitlab-com/-/network/master)'s a project following the second approach. [Here](https://www.youtube.com/watch?v=3XjeYfH2BBI&t=426) is a section of a talk proclaiming the second philosophy.
 
-TODO: 
-- [merge] ff = false # forbid fast-forward merges, because merge commits is historic information that doesn't hurt you and might be useful to somebody
+## Branching strategies
 
-
-
-Sometimes there are merge conflicts and thus your PR can't be accepted. This happens when the master branch advanced in the meantime while you were working on your topic branch and both branches changed overlapping lines of code. The PR web interface will tell you that there are conflicts and that the branch can't be merged.
-
-Some teams prefer to have a linear history, where there are no branches and merges visible. 
-
-When PRs are the preferred way to drive development, the question arises who is responsible for merging changes. There are two options:
-
-1. It's either the seniors of the project. They merge the change manually making sure and taking responsibility that the code is integrated without breakage. For that they either resolve conflicts locally on their machine and push the result or they use the web interface for merging if the git server provides one.
-
-2. It's the person who submits the PR.
-
-The rest of this section goes into detail about option 2.
-
-## [X] Branching strategies
-
-#### [X] Release handling
+#### Release handling
 
 How you handle releases depends on whether you have to support multiple software releases. If you always only release one version and then develop the next version, then simply adding __tags__ to the master branch is sufficient.
 
@@ -133,7 +125,7 @@ Sometimes you detect a bug that affects multiple releases or your master. There 
 
 - When you have fixed the issue in one branch you can cherry-pick the commits onto the other branches.
 
-#### [X] Popular Branching Strategies
+#### Popular Branching Strategies
 
 There are a few branching strategy guides out there. One of the first is [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/). It was one of the first detailed branching guidelines for git and gained a lot of popularity because of that. It's an interesting read, but in my humble opinion it's an overkill for a branching strategy. Here are two reddit threads [[1]](https://www.reddit.com/r/git/comments/bkvo0h/lpt_dont_go_overboard_with_your_branching_strategy/) [[2]](https://www.reddit.com/r/programming/comments/a8n44j/a_successful_git_branching_model/) where this strategy is discussed and where the downsides of it are layed out.
 
@@ -147,7 +139,7 @@ Once in a while some company invents a new Git workflow, gives it a fancy name a
 
 However, it's not very satisfying to read these articles because you'll realize they're mostly the same as TBD. Which speaks for TBD IMO. So many Git specialist companies recommending something like it.
 
-#### [X] Long-lived topic branches
+#### Long-lived topic branches
 
 Topic branches should be short-lived. This means that ideally only one or a few days should pass between branching and merging back. If branches live longer, problems arise from the fact that potentially the code in master changes, resulting in a divergence between the current master codebase and the version on which you created your branch. Merging/rebasing becomes very complicated.
 
@@ -156,4 +148,6 @@ Topic branches should be short-lived. This means that ideally only one or a few 
     - Use _feature toggles_ [[1]](https://martinfowler.com/articles/feature-toggles.html) [[2]](https://martinfowler.com/articles/feature-toggles.html) ... TL;DR: Add some form of toggle (an `if` statement most of the time) to dis- and enable the new code. With this approach the new code resides next to the old and both evolve close together.
     - Use [branch by abstraction](https://trunkbaseddevelopment.com/branch-by-abstraction/), a variant of feature toggles where you first introduce a new abstraction that wraps the part of the code you want to change. Then you implement the new code as an implementation of that abstraction while the rest of the team uses the old implementation 
 
-## [ ] E-Mail based workflow (Linux kernel)
+## E-Mail based workflow (Linux kernel)
+
+The Linux kernel is the birht place of Git. The lead developer of Linux, Linus Torvalds, made Git because he needed a source code manager that suits the development workflow of the kernel. That workflow is centered around mailing lists. Code changes ("patches") are shared via mailings lists and there is no central Git server like GitHub. [Here](https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows) is an overview of distributed Git workflows. [Here](https://git-send-email.io/) is a guide explaining how to use Git with E-Mails.
