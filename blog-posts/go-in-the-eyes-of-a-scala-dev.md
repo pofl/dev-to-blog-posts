@@ -9,6 +9,8 @@
 - really missing expression-based syntax (Go doesn't even have the ternary operator `<cond> ? <a> : <b>`)
 - simplicity of the language leads to loss of power in creating abstract interfaces
 - unsophisticated type system leads to "dynamic typing" in practice (`interface{}`)
+- <https://stackoverflow.com/questions/19979178/what-is-the-idiomatic-go-equivalent-of-cs-ternary-operator>
+- <https://stackoverflow.com/questions/10485743/contains-method-for-a-slice>
 
 ## imperative vs functional
 
