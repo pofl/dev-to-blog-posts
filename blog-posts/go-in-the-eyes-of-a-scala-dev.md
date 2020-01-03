@@ -3,6 +3,7 @@
 - only one kind of loop
 - compilation speed
 - CSP is much better than actors
+- doesn't compile when any var unused
 
 ## Con
 
