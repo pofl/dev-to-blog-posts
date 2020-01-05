@@ -15,40 +15,62 @@ Another guide about the same topic: <https://www.codingblocks.net/podcast/compar
 
 ## Forking vs Centralized Workflow
 
-1. The centralized workflow - i.e. all developers on a team have read and write access to a shared repo.
-    - This is especially common for professional teams.
-    - Team members fetch from from the central repo, work in topic branches and push their branches to the central repo. Code is reviewed by other devs in Pull Requests. Accepted PRs merge the branch into `master`.
-2. The forking workflow - i.e. only core developers can change the repo.
-    - This is the most common form of collaboration for open source projects.
-    - The goal of this workflow is that the publicly visible repository sustains a high quality. Only trusted people (i.e. the maintainers of a project) can modify it.
-    - The way non-maintainers contribute to such projects is by a process called _forking_. It clones the entire git repo to your personal user account.
-    - Say, if I want to make a contribution to some open source project like the programming language Scala. I would go to the official repo github.com/scala/scala and click on the _Fork_ button. That would create a copy of that repo under github.com/pofl/scala. I would have full control over that clone. I can push to it how ever I want.
-    - When I want to submit a contribution to the official repo, I will first push my changes to my fork. Then I can create a Pull Request that if accepted will merge the code from a branch in my fork into a branch in the official repo.
-    - The typical workflow is 
-        - Fork the repo.
-        - Clone your fork to your computer (`origin`).
-        - Add the official repo as a remote (`upstream`).
-        - Fetch `upstream`.
-        - Create a new branch from `upstream/master`.
-        - When you're done, push it to `origin/topic-branch`.
-        - Create a PR.
-        - Resolve all requested changes that the maintainers respond with.
-        - The mainters accept the PR and the branch is pulled into `upstream`.
+##### The centralized workflow - i.e. all developers on a team have read and write access to a shared repo.
+
+This is especially common for professional teams. Team members fetch from the central repo, work in topic branches and push their branches to the central repo. Code is reviewed by other devs in Pull Requests. Accepted PRs merge the branch into `master`.
+
+##### The forking workflow - i.e. only core developers can change the repo.
+
+This is the most common form of collaboration for open source projects. The goal of this workflow is that the publicly visible repository sustains a high quality. Only trusted people (i.e. the maintainers of a project) can modify it. The way non-maintainers contribute to such projects is by a process called _forking_. It clones the entire git repo to your personal user account.
+
+Say, if I want to make a contribution to some open source project like the programming language Scala. I would go to the official repo github.com/scala/scala and click on the _Fork_ button. That would create a copy of that repo under github.com/pofl/scala. I would have full control over that clone. I can push to it how ever I want.
+
+When I want to submit a contribution to the official repo, I will first push my changes to my fork. Then I can create a Pull Request in the upstream project. Such a PR is essentially a request to merge a branch in my repo into the upstream repo. It's called Pull Request instead of Merge Request (which it is called in GitLab btw) simply because 'pull' is the gitnically correct term for fetching a branch from a remote and merging it into HEAD.
+
+The day-to-day workflow is:
+- Fork the repo.
+- Clone your fork to your computer (`origin`).
+- Add the official repo as a remote (`upstream`).
+- Fetch `upstream`.
+- Create a new branch from `upstream/master`.
+- When you're done, push it to `origin/topic-branch`.
+- Then you can create a PR in the upstream project where you can request that your topic-branch be merged as if it was a branch in the upstream repo.
+- Resolve all requested changes that the maintainers pose.
+- The maintainers accept the PR and the branch is pulled form your fork into `upstream`.
 
 [GitHub's guide on forking](https://guides.github.com/activities/forking/)
 
-## Hygiene considerations for the Git history
+## Git history hygiene
 
-<!--
-TODO: Here intro: 
-Some teams dictate code style, clean history and code reviews.
-Clean Git history actually means clean master history.
--->
-Clean and consistent code is easier to work with. To accomplish that teams author a code style guide and enforce it. The addition of Git as a tool for development brings with it a whole new dimension of things that need to be kept clean. This section explains these things.
+Developers strive for clean code. Clean and consistent code is easier and faster to work with. To accomplish that teams author a code style guide and enforce it. The addition of Git as a tool to your development setup brings with it a whole new dimension of things that need to be kept clean. This section explains these things.
 
-The goal is to have a clean Git history... it's called Git history although what people actually mean is the history of `master` (and other permanent branches).
+If you are following the developer community on the internet you'll come across a few articles and blog posts talking about the git history. Many people have string opinions about what a clean history is. Curiously, when people say Git history what they actually mean most of the time is the shape of the commit graph of `master` and other permanent branches. We'll cover that in this section. What we'll also cover is under what conditions a commit is 'clean'.
 
-#### Permissions
+### Linearity of Git history
+
+When you merge a branch into another, usually a merge commit is created but not always. Git defaults to not create a merge commit if it's not necessary (this is called [fast-forward merging](http://marklodato.github.io/visual-git-guide/index-en.html#merge)). A merge is what happens anytime a code contribution gets accepted into `master`, and that's the point where some people go religious. Luckily, most people just accept the default behavior and live with it.
+
+##### Linear history
+
+There is one philosophical tribe of people who find that the commit graph should be linear. They want to be able to have a look at the Git history and immediately be able to see what has been happening and who's been doing what. With a linear history all you see is the unnoisy `master` and the feature branches that are in progress. A linear history is achieved by rebasing the feature branch onto master before merging/pulling and enforcing fast-forward merges eliminating merge commits.
+
+The downside of this approach is that rebasing is quite an overhead as it involves more steps than merging. It also becomes limiting when many people work on the same repo, as there will be situations where devs will have to re-rebase because master changed before the PR got reviewed. The advantage is that you really do get a cleaner look at you history.
+
+[Here](https://stackoverflow.com/questions/15316601/in-what-cases-could-git-pull-be-harmful) is a link that discusses and explains this philosphy further. [Here](https://gitlab.gnome.org/GNOME/mutter/-/network/master) you can see the Git history of a project following the this philosophy.
+
+##### Maximum historic information
+
+The other extreme is one where people disable fast-forward merges and enforce the creation of merge commits. The philosophy behind this is that the history is a source of information and the fact that code was created on feature branches would be denied when you create a fast-forward merge. "A linear history is a lie" is their saying.
+
+[Here](https://www.atlassian.com/blog/git/git-team-workflows-merge-or-rebase) is an article comparing the two approaches with favoring the latter. [Here](https://gitlab.com/gitlab-com/www-gitlab-com/-/network/master)'s a project following the second approach. [Here](https://www.youtube.com/watch?v=3XjeYfH2BBI&t=426) is (a section of a) talk proclaiming the second philosophy.
+
+##### Squash merge
+
+This is another approach how to keep the history linear. [This article](https://docs.microsoft.com/en-us/azure/devops/repos/git/merging-with-squash) explains everything.
+
+TL;DR a squash merge is a merge where the entire merge source branch is condensed to a single commit which is created on top of the merge target branch without creating a merge commit. Some teams like to do this because it keeps the Git history slim.
+
+### Permissions
 
 Many Git servers allow restricting permissions to some extent. Here are a few use cases:
 
@@ -63,21 +85,13 @@ So in both examples what you want to achieve is, basically, to restrict write pe
 
 Here are some links that go into more detail: [GitLab on the benefits of branch protection](https://about.gitlab.com/blog/2014/11/26/keeping-your-code-protected/), [GitLab documentation of allowing branches to be modified only through PRs](https://docs.gitlab.com/12.3/ee/user/project/protected_branches.html#using-the-allowed-to-merge-and-allowed-to-push-settings) (Merge Requests in the GitLab language) and [GitHub on their branch protection features](https://help.github.com/en/enterprise/2.18/user/articles/about-protected-branches)
 
-#### Clean commits
+### Clean commits
 
 First, a link: [Anatomy of a perfect Pull Request](https://opensource.com/article/18/6/anatomy-perfect-pull-request)
 
-Many teams have rules that determine under which conditions the commit history is 'clean'. Firstly many teams have rules what the commit message should look like. One very popular set of rules is this (read the [source](https://chris.beams.io/posts/git-commit/) to understand the reasoning behind these rules):
+Many teams have rules that determine under which conditions the commit history is 'clean'. Firstly many teams have rules for what the commit message should look like. One very popular set of rules is [this](https://chris.beams.io/posts/git-commit/). Another [write-up](https://wiki.openstack.org/wiki/GitCommitMessages#Summary_of_Git_commit_message_structure) of rules.
 
-1. Separate subject from body with a blank line
-2. Do not end the subject line with a period
-3. Use the imperative mood in the subject line
-4. Use the body to explain what and why vs. how
-5. Capitalize the subject line
-6. Limit the subject line to 50 characters
-7. Wrap the body at 72 characters
-
-But there are other styles. I've heard of projects which mandate that the commit title starts with the name of the module or the file in which the changes were made or the name of the module that is affected (in such a case there is usually a not so restrictive rule on title length). Some teams also mandate that there must always be a body.
+Besides those I've heard of projects which mandate that the commit title starts with the name of the module or the file in which the changes were made (in such a case there is usually a not so restrictive rule on title length). Some teams also mandate that there must always be a body.
 
 One very popular rule is: for every commit compilation has to succeed and the code needs to be free of errors (minimum: tests have to pass). The reason for this is that if somehow at one point a regression emerges, you can easily find out what commit caused it with `git bisect` ([Link1](https://americanexpress.io/git-bisect/), [Link2](https://stackoverflow.com/questions/4713088/how-to-use-git-bisect)).
 
@@ -86,26 +100,6 @@ The reason why many teams have rules to enforce a clean history is to simplify c
 We all do however make that "WIP" commit from time to time. We do commits that don't build, that have an ugly commit message etc. With git you can always go back and clean your history up with `git rebase --interactive`. See [this guide](https://git-rebase.io/) to learn how to manipulate the Git history.
 
 PS: [Linus Torvalds on _clean history_](https://lwn.net/Articles/328438/)
-
-#### Squash merge
-
-[This article](https://docs.microsoft.com/en-us/azure/devops/repos/git/merging-with-squash) explains everything.
-
-TL;DR a squash merge is a merge where the entire merge source branch is condensed to a single commit which is created on top of the merge target branch without creating a merge commit. Some teams like to do this because it keeps the Git history slim.
-
-Personally I'm not a fan of this. I see the argument that a topic branch should contain only one cohesive change so squash-merging should be okay in theory. However, I disagree with this because in practice fixing an issue or making a change often entails multiple logical single changes which should be in separate commits IMO.
-
-#### Linearity of Git history
-
-One issue -- that is kind of controversial in the Git community -- is how to deal with merging branches that have untrivial conflicts with merge target branch. You get in such a situation easily when you have done a lot of changes on a branch or when the master branch has received many changes while you were working on your task. At this point you might feel like you better synchronize your branch with master, because for one you don't want to bother the reviewer with merging and secondly you probably know your code better anyway and can avoid mistakes better.
-
-There are two approaches to do that synchronization. Either you `pull` the `origin/master` branch into your topic branch or you `rebase` the topic branch onto the current `origin/master`. This is discussed in length [here](https://www.atlassian.com/blog/git/git-team-workflows-merge-or-rebase), [here](https://stackoverflow.com/questions/2472254/when-should-i-use-git-pull-rebase), [here](https://stackoverflow.com/questions/15316601/in-what-cases-could-git-pull-be-harmful), and [here](https://adamcod.es/2014/12/10/git-pull-correct-workflow.html).
-
-There are two extremes in philosophy regarding Git history:
-1. Those who want a perfectly linear history for master without any merge commits.
-2. Those who try to never rewrite history. They avoid rebasing and only allow  `rebase -i` to clean up the commits in their topic branch. Sometimes they forbid fast-forward merges ([explanation of fast-forward merges](http://marklodato.github.io/visual-git-guide/index-en.html#merge)).
-
-The argument of the first is that neat history is easier to understand. The argument of the latter is that changing history is like lying and that the benefit is questionable. [Here](https://gitlab.gnome.org/GNOME/mutter/-/network/master) you can see the Git history of a project following the first philosophy and [here](https://gitlab.com/gitlab-com/www-gitlab-com/-/network/master)'s a project following the second approach. [Here](https://www.youtube.com/watch?v=3XjeYfH2BBI&t=426) is a section of a talk proclaiming the second philosophy.
 
 ## Branching strategies
 
