@@ -1,6 +1,6 @@
 ---
 title: How to work with git - An overview of git workflows
-published: false
+published: true
 description: 
 tags: git
 ---
