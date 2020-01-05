@@ -7,7 +7,7 @@ tags: git
 
 > If you're here looking for a recommendation on what workflow to use, I strongly support the [recommendation](https://docs.microsoft.com/en-us/azure/devops/repos/git/git-branching-guidance?view=azure-devops) Microsoft hands out to their customers.
 
-Git workflows differ from dev team to dev team and from git server to git server (Github, Gitlab, etc.). Git as a technology is so solid and flexible that people have found multiple viable workflows. Here is an extensive overview. It is assumed that you know git.
+Git workflows differ from dev team to dev team and from git server to git server (Github, Gitlab, etc.). Git as a technology is so solid and flexible that people have found multiple viable workflows. Here is an extensive overview. It is assumed that you know git and [feature branches](https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow).
 
 > I plan on updating this post based on your feedback. So please, if you think something's wrong or missing, or if a link becomes out-dated leave a comment or contact me!
 
@@ -103,7 +103,9 @@ PS: [Linus Torvalds on _clean history_](https://lwn.net/Articles/328438/)
 
 ## Branching strategies
 
-#### Release handling
+In this section I'll discuss guidelines for what branches to create and when to create them.
+
+### Release handling
 
 How you handle releases depends on whether you have to support multiple software releases. If you always only release one version and then develop the next version, then simply adding __tags__ to the master branch is sufficient.
 
@@ -115,15 +117,15 @@ Sometimes you detect a bug that affects multiple releases or your master. There 
 
 - Git Flow recommends creating a branch from the release and merging the fixing commits into every affected release and the develop branch.
 
-- You can always implement the fix for every release manually
+- You can implement the fix for every release manually
 
 - When you have fixed the issue in one branch you can cherry-pick the commits onto the other branches.
 
-#### Popular Branching Strategies
+### Popular Branching Strategies
 
-There are a few branching strategy guides out there. One of the first is [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/). It was one of the first detailed branching guidelines for git and gained a lot of popularity because of that. It's an interesting read, but in my humble opinion it's an overkill for a branching strategy. Here are two reddit threads [[1]](https://www.reddit.com/r/git/comments/bkvo0h/lpt_dont_go_overboard_with_your_branching_strategy/) [[2]](https://www.reddit.com/r/programming/comments/a8n44j/a_successful_git_branching_model/) where this strategy is discussed and where the downsides of it are layed out.
+There are a few branching strategy guides out there. [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) was one of the first written detailed branching guidelines on the internet and gained a lot of popularity because of that. It's an interesting read, but in my humble opinion it's an overkill for a branching strategy. Here are two reddit threads [[1]](https://www.reddit.com/r/git/comments/bkvo0h/lpt_dont_go_overboard_with_your_branching_strategy/) [[2]](https://www.reddit.com/r/programming/comments/a8n44j/a_successful_git_branching_model/) where this strategy is discussed and where the downsides of it are layed out.
 
-Another very popular workflow is [Trunk-based development](https://trunkbaseddevelopment.com/) (TBD). This website has many great articles about the details of the workflow. Some parts of it can be applied to other workflows. Microsoft has published a [recommendation](https://docs.microsoft.com/en-us/azure/devops/repos/git/git-branching-guidance?view=azure-devops) for Git workflows that is very very similar to TBD while being a much shorter read. That article and TBD in general is my personal recommendation to be a basis for your workflow.
+Another very popular workflow is [Trunk-based development](https://trunkbaseddevelopment.com/) (TBD). The website has many great articles about the details of the workflow. Some parts of it can be applied to other workflows. Microsoft has published a [recommendation](https://docs.microsoft.com/en-us/azure/devops/repos/git/git-branching-guidance?view=azure-devops) for Git workflows that is very very similar to TBD while being a much shorter read. That article and TBD in general is my personal recommendation to be a basis for your workflow.
 
 Once in a while some company invents a new Git workflow, gives it a fancy name and releases it as an article. Here are those that I'm aware of.
 
@@ -131,9 +133,9 @@ Once in a while some company invents a new Git workflow, gives it a fancy name a
 - [GitHub Flow](https://guides.github.com/introduction/flow/)
 - [GitLab Flow](https://docs.gitlab.com/ee/workflow/gitlab_flow.html)
 
-However, it's not very satisfying to read these articles because you'll realize they're mostly the same as TBD. Which speaks for TBD IMO. So many Git specialist companies recommending something like it.
+However, it's not very satisfying to read these articles because you'll realize they're mostly the same as TBD. Which again speaks for TBD IMO.
 
-#### Long-lived topic branches
+### Long-lived topic branches
 
 Topic branches should be short-lived. This means that ideally only one or a few days should pass between branching and merging back. If branches live longer, problems arise from the fact that potentially the code in master changes, resulting in a divergence between the current master codebase and the version on which you created your branch. Merging/rebasing becomes very complicated.
 
@@ -144,4 +146,8 @@ Topic branches should be short-lived. This means that ideally only one or a few 
 
 ## E-Mail based workflow (Linux kernel)
 
-The Linux kernel is the birht place of Git. The lead developer of Linux, Linus Torvalds, made Git because he needed a source code manager that suits the development workflow of the kernel. That workflow is centered around mailing lists. Code changes ("patches") are shared via mailings lists and there is no central Git server like GitHub. [Here](https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows) is an overview of distributed Git workflows. [Here](https://git-send-email.io/) is a guide explaining how to use Git with E-Mails.
+The Linux kernel is the birht place of Git. The lead developer of Linux, Linus Torvalds, made Git because he needed a source code management system that suits the development workflow of the kernel. That workflow is centered around mailing lists. Code changes ("patches") are shared via mailings lists and there is no central Git server like GitHub. [Here](https://git-scm.com/book/en/v2/Distributed-Git-Distributed-Workflows) is an overview of distributed Git workflows. [Here](https://git-send-email.io/) is a guide explaining how to use Git with E-Mails.
+
+---
+
+> So far for this workflow guide. Thanks for reading and please give me feedback :)
