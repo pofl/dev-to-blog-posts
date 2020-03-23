@@ -7,6 +7,7 @@
 
 ## Con
 
+- enums are a horrible hack
 - really missing expression-based syntax (Go doesn't even have the ternary operator `<cond> ? <a> : <b>`)
 - simplicity of the language leads to loss of power in creating abstract interfaces
 - unsophisticated type system leads to "dynamic typing" in practice (`interface{}`)
